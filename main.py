@@ -60,10 +60,6 @@ for i, ids in enumerate(picture):
     # print(correct_url)
     url = ya_upload_url + ya_params + correct_url
     # print(url)
-    # # href = requests.get(ya_upload_url, headers=ya_headers, params=ya_params)
-    # # print(href.json())
-    # # url = href.json()['href']
-    # # print(url)
     response = requests.post(url = url, headers = ya_headers)
     # print(response)
     # print(response.json())
@@ -83,4 +79,4 @@ for index in range(length):
 pprint.pprint(response.json())
 
 
-#
+#AQAAAAAGZXvUAADLW76jFY9KWERtvUy7JjAglwA
