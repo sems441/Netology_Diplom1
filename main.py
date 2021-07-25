@@ -13,37 +13,43 @@ def vk_download():
                    "=d33e674fd33e674fd33e674f2cd346ec9edd33ed33e674fb3d7f3cc177e8fa046ae1411"
     url = uri_vk + str(id_vk) + access_token + version
     response = requests.get(url=url)
-
-    for object_ in response.json()['response']['items']:
-        max_size = 0
-        url_picture = []
-        pictures[object_['id']] = []
-        pictures[object_['id']].append(object_['likes']['count'])
-        pictures[object_['id']].append(object_['date'])
-        for size in object_['sizes']:
-            if size['height'] > max_size:
-                max_size = size['height']
-                url_picture = size['url']
-        pictures[object_['id']].append(url_picture)
-    return pictures
+    if response.status_code != 200:
+        print("Неверный ответ с сервера\n")
+    else:
+        for object_ in response.json()['response']['items']:
+            max_size = 0
+            url_picture = []
+            pictures[object_['id']] = []
+            pictures[object_['id']].append(object_['likes']['count'])
+            pictures[object_['id']].append(object_['date'])
+            for size in object_['sizes']:
+                if size['height'] > max_size:
+                    max_size = size['height']
+                    url_picture = size['url']
+            pictures[object_['id']].append(url_picture)
+        print("Данные получены. Можно начинать загрузку\n")
+        return pictures
 
 
 def odnoklassniki_download():
-    id_odn = input("Введите id пользователя: ")
+    id_odn = input("Введите id альбома: ")
     token = input("Введите свой токен от Одноклассников: ")
     uri = "https://api.ok.ru/fb.do?"
-    album_id = "aid=463566561801"
-    sys_info = f"&application_key=CFELGPJGDIHBABABA&fid={id_odn}&format=json&method=photos.getPhotos"
-    sig_api = "&sig=364ee91f0e71219a4cf2cb7f4ec9bbed"
+    sys_info = f"&application_key=CFELGPJGDIHBABABA&aid={id_odn}&format=json&method=photos.getPhotos"
+    sig_api = "&sig=66b3c65406a17b4c1f1d2691c709275e"
     token = f"&access_token={token}"
 
     pictures = {}
-    url = uri + album_id + sys_info + sig_api + token
+    url = uri + sys_info + sig_api + token
     request = requests.get(url)
-    for picture in request.json()["photos"]:
-        pictures[picture["id"]] = []
-        pictures[picture["id"]].append(picture["pic640x480"])
-    return pictures
+    if request.status_code != 200:
+        print("Неверный ответ с сервера\n")
+    else:
+        for picture in request.json()["photos"]:
+            pictures[picture["id"]] = []
+            pictures[picture["id"]].append(picture["pic640x480"])
+        print("Данные получены. Можно начинать загрузку\n")
+        return pictures
 
 
 def ya_disk_upload(data, index):
@@ -74,7 +80,9 @@ def ya_disk_upload(data, index):
 
     files_url = 'https://cloud-api.yandex.net/v1/disk/resources?path=%2Fnetology&fields=_embedded'
     response = requests.get(files_url, headers=ya_headers)
+    print(response.json())
     length = response.json()['_embedded']['total']
+    print(length)
     for index in range(length):
         log_file = {}
         name = response.json()['_embedded']['items'][index]['name']
@@ -83,6 +91,7 @@ def ya_disk_upload(data, index):
         log_file["size"] = size
         with open("upload.txt", "a", encoding="utf-8") as file:
             file.write(str(f"{log_file}\n"))
+    print("Данные загружены\n")
 
 
 answer = 0
