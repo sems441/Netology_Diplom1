@@ -78,7 +78,7 @@ def ya_disk_upload(data, index):
         url = ya_upload_url + ya_params + correct_url
         requests.post(url=url, headers=ya_headers)
 
-    files_url = 'https://cloud-api.yandex.net/v1/disk/resources?path=%2Fnetology&fields=_embedded'
+    files_url = 'https://cloud-api.yandex.net/v1/disk/resources?path=netology'
     response = requests.get(files_url, headers=ya_headers)
     print(response.json())
     length = response.json()['_embedded']['total']
@@ -92,6 +92,7 @@ def ya_disk_upload(data, index):
         with open("upload.txt", "a", encoding="utf-8") as file:
             file.write(str(f"{log_file}\n"))
     print("Данные загружены\n")
+
 
 
 answer = 0
