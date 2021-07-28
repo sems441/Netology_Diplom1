@@ -97,6 +97,7 @@ def ya_disk_upload(data, index):
         print("Данные загружены\n")
 
 
+
 answer = 0
 pictures = []
 element_id = 0
