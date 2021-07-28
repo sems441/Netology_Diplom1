@@ -58,7 +58,7 @@ def ya_disk_upload(data, index):
     ya_upload_url = "https://cloud-api.yandex.net/v1/disk/resources/upload?"
 
     for i, ids in enumerate(data):
-        PySimpleGUI.one_line_progress_meter('Загрузка в Яндекс Диск', i + 1, len(data), '-key-')
+        PySimpleGUI.one_line_progress_meter('Загрузка в Яндекс Диск', i + 1, len(data), 'Файлы: ')
         time.sleep(1)
         correct_url = "&url="
         ya_params = f"path=%2Fnetology%2F{ids}.jpg"
@@ -78,20 +78,23 @@ def ya_disk_upload(data, index):
         url = ya_upload_url + ya_params + correct_url
         requests.post(url=url, headers=ya_headers)
 
-    files_url = 'https://cloud-api.yandex.net/v1/disk/resources?path=%2Fnetology&fields=_embedded'
+    files_url = 'https://cloud-api.yandex.net/v1/disk/resources?path=netology'
     response = requests.get(files_url, headers=ya_headers)
-    print(response.json())
-    length = response.json()['_embedded']['total']
-    print(length)
-    for index in range(length):
-        log_file = {}
-        name = response.json()['_embedded']['items'][index]['name']
-        log_file["file_name"] = name
-        size = response.json()['_embedded']['items'][index]['size']
-        log_file["size"] = size
-        with open("upload.txt", "a", encoding="utf-8") as file:
-            file.write(str(f"{log_file}\n"))
-    print("Данные загружены\n")
+    if response.status_code != 200:
+        print("Неверный ответ с сервера\n")
+    else:
+        length = response.json()['_embedded']['total']
+        # print(response.json())
+        # print(length)
+        for index in range(length):
+            log_file = {}
+            name = response.json()['_embedded']['items'][index]['name']
+            log_file["file_name"] = name
+            size = response.json()['_embedded']['items'][index]['size']
+            log_file["size"] = size
+            with open("upload.txt", "a", encoding="utf-8") as file:
+                file.write(str(f"{log_file}\n"))
+        print("Данные загружены\n")
 
 
 answer = 0
